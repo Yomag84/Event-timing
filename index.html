@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Calculator</title>
+    <link rel="stylesheet" href="bootstrap-5.0-2.2-dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+
+        #countdown {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+            
+                <h2>Time Calculator</h2>
+
+                <div class="row">
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="hours">Hours:</label>
+                            <input type="number" id="hours" min="0" value="0" >
+                        </div>
+                        <div class="form-group">
+                            <label for="minutes">Minutes:</label>
+                            <input type="number" id="minutes" min="0" value="0" >
+                        </div>
+                        <div class="form-group">
+                            <label for="seconds">Seconds:</label>
+                            <input type="number" id="seconds" min="0" value="0">
+                        </div>
+
+
+                    
+
+                        <button onclick="calculateTime()">Calculate</button>
+                        <button onclick="stop()">Clear All</button>
+
+                        <h3>Total Seconds:</h3>
+                        <p id="totalSeconds">0</p>
+                        <p id="ftime">0</p>
+                    </div>
+                    <div class="col-8">
+                        <h2>Countdown Timer</h2>
+
+                        <div id="countdown"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+    <script src="jquery-3.6.4.min.js"></script>
+    <script src="bootstrap-5.0-2.2-dist/js/bootstrap.min.js"></script>
+
+    <script>
+
+        var hours, minutes, seconds;
+        var presum = 2; var x;
+        var days, fhour, fmin, fsec;
+        const newDate=""; var targetDate="";
+
+        // Get values from input fields
+        function getValues(){
+            this.hours = document.getElementById("hours");
+            this.minutes = document.getElementById("minutes");
+            this.seconds = document.getElementById("seconds");
+        }
+
+        // Get values from input fields
+        function initValues(){
+            this.hours.value = 0;
+            this.minutes.value = 0;
+            this.seconds.value = 0;
+            this.presum = 2;
+            this.targetDate = 0;
+        }
+
+        // Get values from input fields
+        function getCurrentValues(){
+            this.days = new Date(this.newDate).getDay();
+            this.fhour =  new Date(this.newDate).getHours();
+            this.fmin =  new Date(this.newDate).getMinutes();
+            this.fsec = new Date(this.newDate).getSeconds();
+        }
+        
+
+        function calculateTime() {
+            this.getValues();
+            // Get values from input fields
+            var val_hours = checkNumber(parseInt(this.hours.value)) == 0 ? parseInt(this.hours.value) : 0;
+            var val_minutes = checkNumber(parseInt(this.minutes.value)) == 0 ? parseInt(this.minutes.value) : 0;
+            var val_seconds = checkNumber(parseInt(this.seconds.value)) == 0 ? parseInt(this.seconds.value) : 0;
+
+            // Calculate total seconds
+            var totalSeconds = val_hours * 3600 + val_minutes * 60 + val_seconds;
+            this.presum += totalSeconds;
+            
+            // 12:00:00 AM on April 17, 2022
+            const date = new Date();
+            // 12:00:20 AM on April 17, 2022
+            this.newDate = addSeconds(date, this.presum);
+
+            this.getCurrentValues();
+
+            // Display the result
+            // document.getElementById("totalSeconds").innerText = new Date(newDate).getHours();
+            document.getElementById("ftime").innerText = this.fhour + " : " + this.fmin+" : " + this.fsec+" s";
+
+            // Set the target date and time (YYYY-MM-DD HH:MM:SS)
+            this.targetDate = new Date(this.newDate).getTime();
+            clearInterval(this.x);
+
+            // Update the countdown every second
+            this.x = setInterval(function() {
+                // Get the current date and time
+                var currentDate = new Date().getTime();
+
+                // Calculate the remaining time
+                var remainingTime = this.targetDate - currentDate;
+                // var remainingTime = new Date(presum);
+
+                // Calculate days, hours, minutes, and seconds
+                var days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+                // Display the countdown
+                $("#countdown").html(days + "d " + hours + "h " + minutes + "m " + seconds + "s ");
+
+                // If the countdown is over, display a message
+                if (remainingTime < 0) {
+                    this.stop(this.x);
+                }
+            }, 1000);
+        }
+
+        function addSeconds(date, seconds) {
+            date.setSeconds(date.getSeconds() + seconds);
+            return date;
+        }
+
+        function stop() {
+            this.initValues();
+            clearInterval(this.x)
+            $("#countdown").html("EXPIRED");
+        }
+
+        function checkNumber(x) {
+
+            // check if the passed value is a number
+            if(typeof x == 'number' && !isNaN(x)){
+            
+                // check if it is integer
+                if (Number.isInteger(x)) {
+                    return 0;
+                }
+                else {
+                    console.log(`${x} is a float value.`);
+                    return 1
+                }
+            
+            } else {
+                console.log(`${x} is not a number`);
+                return 1
+            }
+        }
+    </script>
+
+</body>
+</html>
