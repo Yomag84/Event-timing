@@ -6,17 +6,9 @@
     <title>Time Calculator</title>
     <link rel="stylesheet" href="bootstrap-5.0-2.2-dist/css/bootstrap.min.css" />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 50px;
-        }
-
-        #countdown {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 20px;
-        }
+        #sortable { list-style-type: none; margin: 0; padding: 0; width: 100%; }
+        #sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }
+        #sortable li span { position: absolute; margin-left: -1.3em; }
     </style>
 </head>
 <body>
@@ -25,10 +17,15 @@
         <section class="content-header">
             <div class="container-fluid">
             
-                <h2>Time Calculator</h2>
+                <h2>Event Time Calculator</h2>
 
                 <div class="row">
                     <div class="col-4">
+                        <h3>Data</h3>
+                        <div class="form-group">
+                            <label for="sessionTitle">Session Title:</label>
+                            <input type="text" id="sessionTitle" placeholder="Session Time" >
+                        </div>
                         <div class="form-group">
                             <label for="hours">Hours:</label>
                             <input type="number" id="hours" min="0" value="0" >
@@ -42,9 +39,6 @@
                             <input type="number" id="seconds" min="0" value="0">
                         </div>
 
-
-                    
-
                         <button onclick="calculateTime()">Calculate</button>
                         <button onclick="stop()">Clear All</button>
 
@@ -53,7 +47,9 @@
                         <p id="ftime">0</p>
                     </div>
                     <div class="col-8">
-                        <h2>Countdown Timer</h2>
+                        <h3>Countdown Timer</h3>
+
+                        <div><ul id="sortable"></ul></div>
 
                         <div id="countdown"></div>
                     </div>
@@ -63,14 +59,17 @@
     </div>
 
 
-    <script src="jquery-3.6.4.min.js"></script>
+    <!-- <script src="jquery-3.6.4.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script src="bootstrap-5.0-2.2-dist/js/bootstrap.min.js"></script>
 
     <script>
 
-        var hours, minutes, seconds;
+        var hours, minutes, seconds, sessionTitle;
         var presum = 2; var x;
         var days, fhour, fmin, fsec;
+        var session_Array = [];
         const newDate=""; var targetDate="";
 
         // Get values from input fields
@@ -78,6 +77,7 @@
             this.hours = document.getElementById("hours");
             this.minutes = document.getElementById("minutes");
             this.seconds = document.getElementById("seconds");
+            this.sessionTitle = document.getElementById("sessionTitle");
         }
 
         // Get values from input fields
@@ -85,6 +85,7 @@
             this.hours.value = 0;
             this.minutes.value = 0;
             this.seconds.value = 0;
+            this.sessionTitle.value = "";
             this.presum = 2;
             this.targetDate = 0;
         }
@@ -141,12 +142,17 @@
 
                 // Display the countdown
                 $("#countdown").html(days + "d " + hours + "h " + minutes + "m " + seconds + "s ");
-
+                
                 // If the countdown is over, display a message
                 if (remainingTime < 0) {
                     this.stop(this.x);
                 }
             }, 1000);
+            session_Array.push([this.sessionTitle.value, this.hours.value + ":" + this.minutes.value + ":" + this.seconds.value ]);
+            
+            $('#sortable').append('<li class="ui-state-default"> <div class="row"> <div class="col-7"> '+this.sessionTitle.value+' </div><div class="col-2"> '+this.hours.value + ":" + this.minutes.value + ":" + this.seconds.value +' </div> <div class="col-3"></div> </list>');
+            
+            
         }
 
         function addSeconds(date, seconds) {
@@ -179,6 +185,11 @@
                 return 1
             }
         }
+
+        $(function(){
+            $('#sortable').sortable();
+        });
+        
     </script>
 
 </body>
